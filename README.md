@@ -8,6 +8,7 @@ According to [this](http://developer.android.com/reference/android/support/v4/ap
 >This version of the pager is best for use when there are a handful of typically more **static** fragments to be paged through, such as a set of tabs. The fragment of each page the user visits will **be kept in memory**, though its view hierarchy may be destroyed when not visible. This can result in using a significant amount of memory since fragment instances can hold on to an arbitrary amount of state. **For larger sets of pages, consider FragmentStatePagerAdapter.**
 
 So i got this,:
+
 ![](https://raw.githubusercontent.com/Beeder/MyStorage/master/Image/TestTabPager/img0.PNG)
 
 When you choose nav drawer item0 and slide among these tabs, every TAB's inner fragment `onCreateView()` , thus, all tabs' inner fragment were saved in the fragment manager. 
@@ -15,7 +16,7 @@ When you choose nav drawer item0 and slide among these tabs, every TAB's inner f
 When you choose nav drawer item1, **only item0's outer fragment was `onDestroyView()`**, all tabs' inner fragment were saved.
 
 So when you select nav drawer item0 again, just item0's outer fragment was `onCreateView()` again, all tabs' inner fragment did nothing!
-as inner fragment's `onCreateView()` wasn't triggered, we see empty!
+**as inner fragment's `onCreateView()` wasn't triggered, we see empty!**
 
 It is pretty easy to solve this problem if you know thing above, just **replace `FragmentPagerAdapter` with [`FragmentStatePagerAdapter`](http://developer.android.com/reference/android/support/v4/app/FragmentStatePagerAdapter.html)**.
 
@@ -26,13 +27,13 @@ After using FragmentStatePagerAdapter, when you select nav drawer item0 again, a
 But it's not perfect ! 
 
 If you print all log info as i do, you will see:
- 1. select nav drawer item0, TAB0's and TAB1's inner fragment were `onCreateView()`
- 2. slide to TAB1, **TAB2's inner fragment was `onCreateView()` automatically but TAB0's inner fragment was not `onDestroyView()`!**  Not what the API said:
+ 1.select nav drawer item0, TAB0's and TAB1's inner fragment were `onCreateView()`
+ 2.slide to TAB1, **TAB2's inner fragment was `onCreateView()` automatically but TAB0's inner fragment was not `onDestroyView()`!**  Not what the API said:
 
 >When pages are not visible to the user, their entire fragment may be destroyed.
 
-3. select nav drawer item1, still **only item0's outer fragment was `onDestroyView()`,**  all inner fragment did nothing (I don't know what have done).
-4. select nav drawer item0 again, surprisely TAB0's and TAB1's inner fragment re `onCreateView()` again, so we can see the TextView's text.
+3.select nav drawer item1, still **only item0's outer fragment was `onDestroyView()`,**  all inner fragment did nothing (I don't know what have done).
+4.select nav drawer item0 again, surprisely TAB0's and TAB1's inner fragment re `onCreateView()` again, so we can see the TextView's text.
 
 For these who want all active inner fragment destroyed when Item0's outer fragment destroyed, you need to keep track of all the active fragment pages and destroy them all when outer fragment is destroyed. For more information, you can see [this](http://stackoverflow.com/questions/12384971/android-fragmentstatepageradapter-how-to-tag-a-fragment-to-find-it-later?answertab=votes#tab-top)
 
@@ -117,9 +118,12 @@ class TabPageIndicatorAdapter extends FragmentStatePagerAdapter {//Change from F
     }
 ```
 
-If you want to remember which tab you chose last time, just override `onViewStateRestored(Bundle savedInstanceState)`, feel free to see my code in project [https://github.com/Beeder/TestTabPager](https://github.com/Beeder/TestTabPager)
+If you want to save which tab you chose last time, just override `onViewStateRestored(Bundle savedInstanceState)`.
+
+Feel free to see my code in project [https://github.com/Beeder/TestTabPager](https://github.com/Beeder/TestTabPager)
 
 
+---------------
 ---------------
 
 I am new to android programming, recently I use navigation drawer and viewpageindicator, but i got stuck here.
