@@ -9,7 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -19,6 +19,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.viewpagerindicator.TabPageIndicator;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 
 public class NewsFragment extends Fragment {
@@ -50,7 +54,10 @@ public class NewsFragment extends Fragment {
 
 
 
-    class TabPageIndicatorAdapter extends FragmentPagerAdapter {
+    class TabPageIndicatorAdapter extends FragmentStatePagerAdapter {//Change from FragmentPagerAdapter to FragmentStatePagerAdapter
+
+        Map<Integer,Fragment> integerFragmentMap = new HashMap<Integer,Fragment>();// keep track of all the "active" fragment pages.
+
         public TabPageIndicatorAdapter(FragmentManager fm) {
             super(fm);
         }
@@ -77,7 +84,28 @@ public class NewsFragment extends Fragment {
                 args.putString("text", "This is TAB2");
                 fragment.setArguments(args);
             }
+
+            integerFragmentMap.put(Integer.valueOf(position),fragment);//when getItem, put it into the Map
+
             return fragment;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            super.destroyItem(container, position, object);
+
+            integerFragmentMap.remove(Integer.valueOf(position));//when destroyItem, remove it from Map
+        }
+
+        public void removeAll()
+        {
+            Iterator iterator = integerFragmentMap.entrySet().iterator();
+            while (iterator.hasNext())
+            {
+                Map.Entry entry = (Map.Entry)iterator.next();
+                Fragment fragment = (Fragment) entry.getValue();
+                fragment.onDestroyView();//Trigger inner fragment's DestroyView() method !
+            }
         }
 
         @Override
@@ -136,8 +164,6 @@ public class NewsFragment extends Fragment {
         int selectedItem=sharedPreferences.getInt("NewsSelected",0);//Default value =0
         Toast.makeText(getActivity(), "Last time, you chose TAB"+selectedItem, Toast.LENGTH_SHORT).show();
         tabPageIndicator.setCurrentItem(selectedItem);//reselect the tab last selected. but the inner fragment isn't recreated, i got empty, why?
-        //pager.setAdapter(tabPageIndicatorAdapter);
-        //tabPageIndicator.setViewPager(pager);
 
         Log.d("MyTag", "NEWS--onViewStateRestored");
     }
@@ -187,6 +213,9 @@ public class NewsFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
+        tabPageIndicatorAdapter.removeAll();//when change nav drawer item to others, auto remove all inner fragment.
+
         Log.d("MyTag", "NEWS--onDestroyView");
     }
 

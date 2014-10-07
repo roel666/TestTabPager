@@ -25,7 +25,7 @@ public class TabFragment1 extends Fragment {
         View view = inflater.inflate(R.layout.fragment_blank, container, false);
         TextView textView = (TextView)view.findViewById(R.id.text_view);
         textView.setText(getArguments().getString("text"));
-        // Inflate the layout for this fragment
+         //Inflate the layout for this fragment
         return view;
     }
 
