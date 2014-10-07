@@ -1,5 +1,7 @@
 ##UPDATE: Problem solved!
 
+**Please see my [Problem Description](https://github.com/Beeder/TestTabPager#problem-description) first!**
+
 After digging into it, I have figured it out. It did have nothing to do with `TabPageIndicator`, all because the `FragmentPagerAdapter` I used.
 
 According to [this](http://developer.android.com/reference/android/support/v4/app/FragmentPagerAdapter.html):
@@ -125,10 +127,12 @@ If you want to save which tab you chose last time, just override `onViewStateRes
 
 Feel free to see my code in project [https://github.com/Beeder/TestTabPager](https://github.com/Beeder/TestTabPager)
 
-If you can read Chinese, [this blog](http://www.cnblogs.com/dancefire/archive/2013/01/02/why-notifyDataSetChanged-does-not-work.html) may help you understand.
+If you can read Chinese, [this blog](http://www.cnblogs.com/dancefire/archive/2013/01/02/why-notifyDataSetChanged-does-not-work.html) may help you understand better.
 
 ---------------
 ---------------
+
+##Problem Description
 
 I am new to android programming, recently I use navigation drawer and viewpageindicator, but i got stuck here.
 
