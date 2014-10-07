@@ -16,7 +16,7 @@ When you choose nav drawer item0 and slide among these tabs, every TAB's inner f
 When you choose nav drawer item1, **only item0's outer fragment was `onDestroyView()`**, all tabs' inner fragment were saved.
 
 So when you select nav drawer item0 again, just item0's outer fragment was `onCreateView()` again, all tabs' inner fragment did nothing!
-**as inner fragment's `onCreateView()` wasn't triggered, we see empty!**
+**As inner fragment's `onCreateView()` wasn't triggered, we see empty!**
 
 It is pretty easy to solve this problem if you know thing above, just **replace `FragmentPagerAdapter` with [`FragmentStatePagerAdapter`](http://developer.android.com/reference/android/support/v4/app/FragmentStatePagerAdapter.html)**.
 
@@ -27,13 +27,16 @@ After using FragmentStatePagerAdapter, when you select nav drawer item0 again, a
 But it's not perfect ! 
 
 If you print all log info as i do, you will see:
- 1.select nav drawer item0, TAB0's and TAB1's inner fragment were `onCreateView()`
- 2.slide to TAB1, **TAB2's inner fragment was `onCreateView()` automatically but TAB0's inner fragment was not `onDestroyView()`!**  Not what the API said:
+
+- select nav drawer item0, TAB0's and TAB1's inner fragment were `onCreateView()`
+ 
+- slide to TAB1, **TAB2's inner fragment was `onCreateView()` automatically but TAB0's inner fragment was not `onDestroyView()`!**  Not what the API said:
 
 >When pages are not visible to the user, their entire fragment may be destroyed.
 
-3.select nav drawer item1, still **only item0's outer fragment was `onDestroyView()`,**  all inner fragment did nothing (I don't know what have done).
-4.select nav drawer item0 again, surprisely TAB0's and TAB1's inner fragment re `onCreateView()` again, so we can see the TextView's text.
+- select nav drawer item1, still **only item0's outer fragment was `onDestroyView()`,**  all inner fragment did nothing (I don't know what have done).
+
+- select nav drawer item0 again, surprisely TAB0's and TAB1's inner fragment re `onCreateView()` again, so we can see the TextView's text.
 
 For these who want all active inner fragment destroyed when Item0's outer fragment destroyed, you need to keep track of all the active fragment pages and destroy them all when outer fragment is destroyed. For more information, you can see [this](http://stackoverflow.com/questions/12384971/android-fragmentstatepageradapter-how-to-tag-a-fragment-to-find-it-later?answertab=votes#tab-top)
 
@@ -122,6 +125,7 @@ If you want to save which tab you chose last time, just override `onViewStateRes
 
 Feel free to see my code in project [https://github.com/Beeder/TestTabPager](https://github.com/Beeder/TestTabPager)
 
+If you can read Chinese, [this blog](http://www.cnblogs.com/dancefire/archive/2013/01/02/why-notifyDataSetChanged-does-not-work.html) may help you understand.
 
 ---------------
 ---------------
